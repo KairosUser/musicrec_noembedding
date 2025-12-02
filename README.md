@@ -295,6 +295,6 @@ Echoes of Mood 是一个基于超小型ALBERT模型的情绪共鸣音乐推荐�
 
 ## 13. 联系方式
 
-- **项目地址**：[GitHub Repository]()
+- **项目地址**：[GitHub Repository](https://github.com/KairosUser/musicrec_noembedding)
 - **邮箱**：junerainmoon@126.com
 
