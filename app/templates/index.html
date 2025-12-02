@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echoes of Mood - 情绪共鸣音乐推荐</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- 背景粒子效果 -->
+        <div id="particles-js"></div>
+        
+        <!-- 标题区域 -->
+        <header class="header">
+            <h1 class="title">Echoes of Mood</h1>
+            <p class="subtitle">情绪共鸣 · 音乐推荐</p>
+        </header>
+        
+        <!-- 输入区域 -->
+        <main class="main-content">
+            <section class="input-section">
+                <textarea 
+                    id="text-input" 
+                    class="text-input" 
+                    placeholder="在这里写下你的心情...\n比如：今天阳光很好，却感到莫名的孤独"
+                    rows="6"
+                ></textarea>
+                <div class="input-footer">
+                    <span id="char-count" class="char-count">0/500</span>
+                    <button id="submit-btn" class="submit-btn">
+                        <span class="btn-text">寻找共鸣</span>
+                    </button>
+                </div>
+            </section>
+            
+            <!-- 推荐结果区域 -->
+            <section class="results-section">
+                <div id="loading" class="loading hidden">
+                    <div class="spinner"></div>
+                    <p>正在寻找与你共鸣的歌曲...</p>
+                </div>
+                
+                <div id="results" class="results">
+                    <!-- 结果将通过JavaScript动态插入 -->
+                </div>
+            </section>
+        </main>
+        
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>基于 BERT 模型的情绪音乐推荐系统</p>
+        </footer>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
