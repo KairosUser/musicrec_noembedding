@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from transformers import BertTokenizer, AlbertModel
+from transformers import AutoTokenizer, AutoModel
 import torch
 from tqdm import tqdm
 import gc
@@ -8,9 +8,9 @@ import gc
 # 批处理大小
 batch_size = 100
 
-def get_albert_embedding(text, tokenizer, model, max_length=512):
+def get_bge_embedding(text, tokenizer, model, max_length=512):
     """
-    获取文本的ALBERT嵌入向量
+    获取文本的BGE嵌入向量
     """
     try:
         # 分词
@@ -30,14 +30,14 @@ def get_albert_embedding(text, tokenizer, model, max_length=512):
         with torch.no_grad():
             outputs = model(**inputs)
         
-        # 使用[CLS]位置的输出作为文本表示
+        # BGE模型使用最后一层隐藏状态的平均值作为文本表示
         # 先将张量移动到CPU，再转换为numpy数组
-        embedding = outputs.last_hidden_state[:, 0, :].squeeze().cpu().numpy()
+        embedding = outputs.last_hidden_state.mean(dim=1).squeeze().cpu().numpy()
         return embedding
     except Exception as e:
         print(f"处理歌词时出错: {e}")
-        # 返回零向量作为默认值
-        return np.zeros(312)
+        # 返回零向量作为默认值，BGE-large-zh-v1.5的嵌入维度是1024
+        return np.zeros(1024)
 
 def main():
     # 加载清洗后的歌词数据
@@ -46,10 +46,10 @@ def main():
     total_songs = len(df)
     print(f"共 {total_songs} 首歌曲")
     
-    # 加载预训练ALBERT模型
-    print("加载ALBERT模型...")
-    tokenizer = BertTokenizer.from_pretrained('voidful/albert_chinese_tiny')
-    model = AlbertModel.from_pretrained('voidful/albert_chinese_tiny')
+    # 加载预训练BGE模型
+    print("加载BGE模型...")
+    tokenizer = AutoTokenizer.from_pretrained('BAAI/bge-large-zh-v1.5')
+    model = AutoModel.from_pretrained('BAAI/bge-large-zh-v1.5')
     
     # 设置设备
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -69,7 +69,7 @@ def main():
         # 处理当前批次
         batch_embeddings = []
         for lyric in batch_lyrics:
-            embedding = get_albert_embedding(lyric, tokenizer, model)
+            embedding = get_bge_embedding(lyric, tokenizer, model)
             batch_embeddings.append(embedding)
         
         # 添加到总嵌入列表

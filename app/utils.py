@@ -1,16 +1,16 @@
 import numpy as np
 import pandas as pd
-from transformers import BertTokenizer, AlbertModel
+from transformers import AutoTokenizer, AutoModel
 import torch
 import os
 
 # 加载模型和数据
 class SongRecommender:
     def __init__(self):
-        # 加载预训练ALBERT模型
-        print("加载ALBERT模型...")
-        self.tokenizer = BertTokenizer.from_pretrained('voidful/albert_chinese_tiny')
-        self.model = AlbertModel.from_pretrained('voidful/albert_chinese_tiny')
+        # 加载预训练BGE模型
+        print("加载BGE模型...")
+        self.tokenizer = AutoTokenizer.from_pretrained('BAAI/bge-large-zh-v1.5')
+        self.model = AutoModel.from_pretrained('BAAI/bge-large-zh-v1.5')
         
         # 设置设备
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -27,7 +27,7 @@ class SongRecommender:
     
     def get_text_embedding(self, text):
         """
-        获取文本的ALBERT嵌入
+        获取文本的BGE嵌入
         """
         inputs = self.tokenizer(
             text,
@@ -42,7 +42,8 @@ class SongRecommender:
         with torch.no_grad():
             outputs = self.model(**inputs)
         
-        embedding = outputs.last_hidden_state[:, 0, :].squeeze().cpu().numpy()
+        # BGE模型使用最后一层隐藏状态的平均值作为嵌入
+        embedding = outputs.last_hidden_state.mean(dim=1).squeeze().cpu().numpy()
         return embedding
     
     def cosine_similarity(self, vec1, vec2):
